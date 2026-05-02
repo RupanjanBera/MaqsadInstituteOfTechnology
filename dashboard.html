@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MAQSAD :: DASHBOARD</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;cursor:crosshair;}
+        body{background:#000;color:#0f0;font-family:'Courier New',monospace;position:relative;}
+        .noise{position:fixed;inset:0;background:repeating-radial-gradient(circle at 20% 30%, rgba(0,255,0,0.05) 0px, #000 3px);pointer-events:none;z-index:2;animation:staticNoise 0.15s infinite;}
+        .scanlines{position:fixed;inset:0;background:repeating-linear-gradient(0deg, rgba(0,255,0,0.08) 0px, rgba(0,255,0,0.08) 1px, transparent 1px, transparent 4px);pointer-events:none;z-index:3;}
+        @keyframes staticNoise{0%{opacity:0.4;}100%{opacity:0.8;}}
+        .system-nav{display:flex;gap:1.2rem;padding:1rem;background:#0a0a0a;border-bottom:2px solid #0f0;flex-wrap:wrap;z-index:10;position:relative;}
+        .system-nav a{color:#0f0;text-decoration:none;font-weight:bold;letter-spacing:1px;transition:0.2s;}
+        .system-nav a:hover,.active-nav{color:#f00;text-shadow:0 0 5px red;transform:skewX(-5deg);border-bottom:2px solid #f00;}
+        .hub-main{padding:2rem;position:relative;z-index:5;}
+        h1{font-size:1.8rem;margin-bottom:0.5rem;animation:glitchTitle 2s infinite;}
+        @keyframes glitchTitle{0%{text-shadow:-2px 0 red,2px 0 green;}100%{text-shadow:2px 0 red,-2px 0 green;}}
+        .surveillance-badge{color:#f00;border:1px solid #f00;display:inline-block;padding:5px 12px;margin:15px 0;animation:pulseRed 1s infinite;}
+        @keyframes pulseRed{0%{opacity:0.6;box-shadow:0 0 0 0 #f00;}100%{opacity:1;box-shadow:0 0 10px 2px #f00;}}
+        .grid-announce{display:flex;flex-wrap:wrap;gap:2rem;margin:2rem 0;}
+        .hub-card{background:#050505;border:1px solid #0f0;padding:1.2rem;width:320px;transition:0.3s;}
+        .hub-card:hover{transform:translateY(-5px);box-shadow:0 0 15px #0f0;}
+        .chat-container{background:#000;border:1px solid #0f0;height:280px;display:flex;flex-direction:column;margin-top:10px;}
+        .chat-messages{flex:1;overflow-y:auto;padding:8px;font-size:0.8rem;}
+        .ai-msg{color:#0f0;margin:5px 0;}
+        .user-msg{color:#ff4444;margin:5px 0;}
+        .chat-input-area{display:flex;border-top:1px solid #0f0;}
+        .chat-input-area input{flex:1;background:#111;border:none;color:#0f0;padding:8px;font-family:monospace;}
+        .chat-input-area button{background:#000;border:none;color:#0f0;padding:0 12px;cursor:pointer;}
+        button{background:#000;border:1px solid #0f0;color:#0f0;padding:6px 12px;font-family:monospace;cursor:pointer;transition:0.2s;}
+        button:hover{background:#0f0;color:#000;}
+        .toast-message{position:fixed;bottom:30px;right:20px;background:#000;border-left:5px solid #f00;padding:12px 18px;z-index:999;font-weight:bold;animation:fadeInOut 3s;}
+        @keyframes fadeInOut{0%{opacity:0;transform:translateX(50px);}10%{opacity:1;transform:translateX(0);}90%{opacity:1;}100%{opacity:0;transform:translateX(50px);}}
+        .short-flicker{animation:flickerFlash 0.1s 2;}
+        @keyframes flickerFlash{0%{opacity:1;background:#0f0;}100%{opacity:0.7;background:#000;}}
+        .glitch{animation:glitchText 0.2s;}
+        @keyframes glitchText{0%{transform:translate(1px,-1px);}100%{transform:translate(-1px,1px);}}
+    </style>
+</head>
+<body>
+<div class="noise"></div><div class="scanlines"></div>
+<nav class="system-nav">
+    <a href="dashboard.html" class="active-nav">[HUB]</a>
+    <a href="training.html">[TRAINING]</a>
+    <a href="subscription.html">[SUBSCRIPTION]</a>
+    <a href="shop.html">[SHOP]</a>
+    <a href="logs.html">[LOGS]</a>
+    <a href="terminal.html">[TERMINAL]</a>
+    <a href="chat.html">[GLOBAL CHAT]</a>
+</nav>
+<main class="hub-main">
+    <h1>MAQSAD INSTITUTE // OBSERVATION HUB</h1>
+    <div class="surveillance-badge" id="surveillanceMsg">● LIVE MONITORING ●</div>
+    <div class="grid-announce">
+        <div class="hub-card">
+            <h3>⚠️ WARNING ⚠️</h3>
+            <p>Your neural patterns are being recorded. Do not resist.</p>
+            <button id="panicBtn">REPORT ANOMALY</button>
+        </div>
+        <div class="hub-card">
+            <h3>CHAMBER AI</h3>
+            <div class="chat-container">
+                <div id="chatMessages" class="chat-messages"><div class="ai-msg">> why are you here</div></div>
+                <div class="chat-input-area"><input type="text" id="chatInput" placeholder="whisper..."><button id="sendChat">⇾</button></div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    function showToast(text, duration=3000){
+        const toast=document.createElement('div');
+        toast.className='toast-message';
+        toast.innerText=text;
+        document.body.appendChild(toast);
+        setTimeout(()=>toast.remove(),duration);
+    }
+    setInterval(()=>{ if(Math.random()<0.25) showToast("⚠️ You are being monitored ⚠️",3000); },10000);
+    document.getElementById('panicBtn')?.addEventListener('click',()=>showToast("🕷️ ALERT: YOUR ANXIETY REGISTERED 🕷️",2500));
+    const chatMsgs=document.getElementById('chatMessages');
+    const chatInput=document.getElementById('chatInput');
+    const sendBtn=document.getElementById('sendChat');
+    const creepyAnswers=["leave now. this is not a simulation.","i can see your cursor tremble.","why do you keep coming back?","you shouldn't have clicked that.","THE INSTITUTE OWNS YOUR GAZE.","...they are watching through your lens","your heartbeat is accelerating"];
+    function addAIMessage(text,isUser=false){
+        const msgDiv=document.createElement('div');
+        msgDiv.className=isUser?'user-msg':'ai-msg';
+        msgDiv.innerText=`> ${text}`;
+        chatMsgs.appendChild(msgDiv);
+        chatMsgs.scrollTop=chatMsgs.scrollHeight;
+        if(!isUser && text.length>0){
+            document.body.classList.add('short-flicker');
+            setTimeout(()=>document.body.classList.remove('short-flicker'),150);
+        }
+        if(Math.random()<0.3) msgDiv.classList.add('glitch');
+    }
+    function aiAutoResponse(){ addAIMessage(creepyAnswers[Math.floor(Math.random()*creepyAnswers.length)]); }
+    sendBtn.addEventListener('click',()=>{
+        const userTxt=chatInput.value.trim();
+        if(!userTxt) return;
+        addAIMessage(userTxt,true);
+        chatInput.value='';
+        setTimeout(aiAutoResponse,700);
+    });
+    setInterval(()=>{ if(Math.random()<0.4) aiAutoResponse(); },15000);
+    let clickCount=0;
+    document.querySelector('h1')?.addEventListener('click',()=>{ clickCount++; if(clickCount===3){ showToast("WHY ARE YOU STILL HERE?",4000); clickCount=0; } else if(clickCount===7){ alert("THE VOID NOTICES YOU"); clickCount=0; } });
+</script>
+</body>
+</html>

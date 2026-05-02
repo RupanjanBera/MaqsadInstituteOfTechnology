@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MAQSAD :: TERMINAL</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;cursor:crosshair;}
+        body{background:#000;color:#0f0;font-family:'Courier New',monospace;}
+        .noise{position:fixed;inset:0;background:repeating-radial-gradient(circle at 50% 50%, rgba(0,255,0,0.06) 0px, #000 2px);pointer-events:none;animation:drift 0.2s infinite;}
+        .scan{position:fixed;inset:0;background:repeating-linear-gradient(0deg, rgba(0,255,0,0.08) 0px, rgba(0,255,0,0.08) 1px, transparent 1px, transparent 4px);pointer-events:none;}
+        @keyframes drift{0%{transform:translate(0);}100%{transform:translate(1px,2px);}}
+        .system-nav{display:flex;gap:1.2rem;padding:1rem;background:#0a0a0a;border-bottom:2px solid #0f0;flex-wrap:wrap;}
+        .system-nav a{color:#0f0;text-decoration:none;font-weight:bold;}
+        .system-nav a:hover,.active-nav{color:#f00;border-bottom:2px solid #f00;}
+        .terminal-container{background:#000;border:2px solid #0f0;margin:2rem;padding:1.5rem;}
+        .term-output{height:350px;overflow-y:auto;margin-bottom:1rem;}
+        .term-input-line{display:flex;align-items:center;border-top:1px solid #0f0;padding-top:10px;}
+        .prompt{color:#0f0;margin-right:10px;font-weight:bold;}
+        #termInput{background:transparent;border:none;color:#0f0;flex:1;outline:none;font-family:monospace;font-size:1rem;}
+        .error{color:#f00;}
+    </style>
+</head>
+<body>
+<div class="noise"></div><div class="scan"></div>
+<nav class="system-nav">
+    <a href="dashboard.html">[HUB]</a><a href="training.html">[TRAINING]</a>
+    <a href="subscription.html">[SUBSCRIPTION]</a><a href="shop.html">[SHOP]</a>
+    <a href="logs.html">[LOGS]</a>
+    <a href="terminal.html" class="active-nav">[TERMINAL]</a><a href="chat.html">[GLOBAL CHAT]</a>
+</nav>
+<main>
+    <div class="terminal-container">
+        <div id="termOutput" class="term-output">
+            <div>> MAQSAD SHELL v0x7F3</div>
+            <div>> Type 'help' for commands | 'reveal' for hidden access</div>
+        </div>
+        <div class="term-input-line"><span class="prompt">$></span><input type="text" id="termInput" autofocus></div>
+    </div>
+</main>
+<script>
+    const output = document.getElementById('termOutput');
+    const input = document.getElementById('termInput');
+    function addLine(text, isError=false){
+        const line = document.createElement('div');
+        line.innerText = text;
+        line.style.color = isError ? '#ff0000' : '#00ff41';
+        output.appendChild(line);
+        output.scrollTop = output.scrollHeight;
+    }
+    function process(cmd){
+        const lower = cmd.toLowerCase().trim();
+        addLine(`> ${cmd}`);
+        if(lower === 'help') addLine("Available: help, access, reveal, glitch, scan, unlock, sudo");
+        else if(lower === 'access'){ addLine("Permission denied. Your identity not recognized.", true); addLine("> tracing IP...", true); }
+        else if(lower === 'reveal'){ addLine("ACCESSING HIDDEN LAYER..."); addLine("REDIRECTING TO FORBIDDEN ZONE"); setTimeout(()=>window.location.href='hidden.html',1300); return; }
+        else if(lower === 'glitch'){ addLine("Executing glitch protocol ███ system instability", true); document.body.style.animation='flash 0.1s 2'; setTimeout(()=>document.body.style.animation='',300); }
+        else if(lower === 'scan') addLine("[SCAN] 3 anomalies found in your environment");
+        else if(lower === 'unlock') addLine("You are not authorized. The hidden door requires a sacrifice.", true);
+        else if(lower === 'sudo') addLine("Even sudo cannot save you from the Institute.", true);
+        else addLine(`Unknown: ${cmd}. Try 'help'.`, true);
+        addLine("----------------");
+    }
+    input.addEventListener('keypress',(e)=>{
+        if(e.key === 'Enter'){
+            const cmd = input.value;
+            if(cmd) process(cmd);
+            input.value = '';
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>MAQSAD :: ENTRY</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: crosshair;
+        }
+        body {
+            background: #000;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+        /* noise overlay */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-radial-gradient(circle at 20% 30%, rgba(0,255,65,0.08) 0px, transparent 2px);
+            pointer-events: none;
+            z-index: 2;
+            animation: staticShift 0.2s infinite;
+        }
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,255,65,0.1) 0px, rgba(0,255,65,0.1) 1px, transparent 1px, transparent 4px);
+            pointer-events: none;
+            z-index: 3;
+        }
+        @keyframes staticShift {
+            0% { opacity: 0.3; transform: translate(0,0); }
+            100% { opacity: 0.7; transform: translate(2px,2px); }
+        }
+        .entry-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+        .boot-text {
+            font-size: 1.8rem;
+            white-space: pre-wrap;
+            border-right: 3px solid #00ff41;
+            padding: 1.5rem;
+            text-shadow: 0 0 5px #0f0;
+            animation: blinkCursor 0.8s infinite;
+        }
+        @keyframes blinkCursor {
+            0%, 100% { border-right-color: #00ff41; }
+            50% { border-right-color: transparent; }
+        }
+        button {
+            background: black;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            padding: 10px 28px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #00ff41;
+            color: black;
+            box-shadow: 0 0 20px #0f0;
+            transform: scale(1.05);
+        }
+        .hidden-btn {
+            visibility: hidden;
+            opacity: 0;
+        }
+        .fake-loader {
+            position: fixed;
+            bottom: 20%;
+            left: 20%;
+            width: 60%;
+            background: #0a0a0a;
+            border: 1px solid #ff0000;
+            padding: 1rem;
+            z-index: 100;
+            text-align: center;
+        }
+        .loader-bar {
+            height: 8px;
+            background: #222;
+            margin-top: 8px;
+        }
+        .loader-fill {
+            width: 0%;
+            height: 100%;
+            background: #00ff41;
+            transition: width 0.05s linear;
+        }
+        .hidden {
+            display: none;
+        }
+        .glitch-text {
+            animation: glitch 0.3s infinite alternate;
+        }
+        @keyframes glitch {
+            0% { text-shadow: -2px 0 red, 2px 0 green; }
+            100% { text-shadow: 2px 0 red, -2px 0 green; }
+        }
+    </style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="scanlines"></div>
+<div class="entry-container">
+    <pre id="bootSequence" class="boot-text">></pre>
+    <button id="enterBtn" class="hidden-btn" disabled>⟁ ENTER THE VOID ⟁</button>
+</div>
+<div id="fakeLoader" class="fake-loader hidden">
+    <div class="glitch-text">LOADING CORRUPTED ACCESS</div>
+    <div class="loader-bar"><div id="loaderFill" class="loader-fill"></div></div>
+</div>
+<script>
+    const bootDiv = document.getElementById('bootSequence');
+    const enterBtn = document.getElementById('enterBtn');
+    const loaderDiv = document.getElementById('fakeLoader');
+    const loaderFill = document.getElementById('loaderFill');
+    const messages = ["...connection established", "MAQSAD INSTITUTE SYSTEMS", "YOU WERE NOT INVITED", "ACCESSING NODE ...", "WARNING: YOUR PRESENCE IS LOGGED"];
+    let msgIndex = 0, charIndex = 0, currentMsg = messages[0];
+
+    function typeEffect() {
+        if (msgIndex >= messages.length) {
+            bootDiv.innerHTML += "\n> SYSTEM READY?";
+            setTimeout(() => {
+                enterBtn.disabled = false;
+                enterBtn.classList.remove('hidden-btn');
+            }, 800);
+            return;
+        }
+        if (charIndex < currentMsg.length) {
+            bootDiv.innerHTML += currentMsg.charAt(charIndex);
+            charIndex++;
+            setTimeout(typeEffect, 50);
+        } else {
+            bootDiv.innerHTML += "\n";
+            msgIndex++;
+            if (msgIndex < messages.length) {
+                currentMsg = messages[msgIndex];
+                charIndex = 0;
+                setTimeout(typeEffect, 400);
+            } else {
+                setTimeout(typeEffect, 300);
+            }
+        }
+    }
+    setTimeout(typeEffect, 200);
+
+    enterBtn.addEventListener('click', () => {
+        enterBtn.disabled = true;
+        loaderDiv.classList.remove('hidden');
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.floor(Math.random() * 12) + 5;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                setTimeout(() => window.location.href = 'login.html', 500);
+            }
+            loaderFill.style.width = progress + '%';
+            if (progress > 40 && progress < 70) loaderFill.style.filter = 'blur(2px)';
+            else loaderFill.style.filter = 'none';
+        }, 70);
+    });
+</script>
+</body>
+</html>

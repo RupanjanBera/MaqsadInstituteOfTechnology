@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>MAQSAD :: COLLECTIVE CHAT</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;cursor:crosshair;}
+        body{background:#000;color:#0f0;font-family:'Courier New',monospace;overflow:hidden;height:100vh;display:flex;flex-direction:column;}
+        .noise-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-radial-gradient(circle at 20% 30%, rgba(0,255,65,0.05) 0px, rgba(0,0,0,0.5) 2px);pointer-events:none;z-index:2;animation:staticShift 0.2s infinite;}
+        .scanlines{position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg, rgba(0,255,65,0.08) 0px, rgba(0,255,65,0.08) 1px, transparent 1px, transparent 4px);pointer-events:none;z-index:3;}
+        @keyframes staticShift{0%{opacity:0.4;background-position:0 0;}100%{opacity:0.8;background-position:5px 5px;}}
+        .system-nav{display:flex;gap:1rem;padding:0.8rem 1rem;background:#0a0a0a;border-bottom:2px solid #0f0;flex-wrap:wrap;z-index:10;position:relative;}
+        .system-nav a{color:#0f0;text-decoration:none;font-weight:bold;letter-spacing:1px;transition:0.2s;}
+        .system-nav a:hover{color:#f00;text-shadow:0 0 5px red;transform:skewX(-5deg);}
+        .active-nav{border-bottom:2px solid #f00;color:#f00;}
+        .chat-container{flex:1;display:flex;flex-direction:column;padding:1rem;position:relative;z-index:5;}
+        .messages-area{flex:1;overflow-y:auto;background:#010101;border:1px solid #0f0;padding:1rem;margin-bottom:1rem;box-shadow:0 0 10px rgba(0,255,0,0.2);}
+        .message{font-size:0.85rem;margin-bottom:8px;word-break:break-word;animation:fadeIn 0.2s;}
+        @keyframes fadeIn{from{opacity:0;transform:translateX(-10px);}to{opacity:1;transform:translateX(0);}}
+        .system{color:#ff8800;}
+        .chat{color:#0f0;}
+        .ai{color:#ff0000;text-shadow:0 0 3px red;}
+        .timestamp{color:#555;font-size:0.7rem;margin-right:8px;}
+        .input-area{display:flex;gap:10px;}
+        #messageInput{flex:1;background:#111;border:1px solid #0f0;color:#0f0;padding:10px;font-family:monospace;outline:none;}
+        button{background:#000;border:1px solid #0f0;color:#0f0;padding:8px 16px;cursor:pointer;transition:0.2s;}
+        button:hover{background:#0f0;color:#000;box-shadow:0 0 10px #0f0;}
+        .status{position:fixed;bottom:10px;right:10px;font-size:0.7rem;color:#888;z-index:20;background:#000;padding:2px 6px;border:1px solid #0f0;}
+        .sound-toggle{position:fixed;bottom:10px;left:10px;background:#000;border:1px solid #f00;padding:4px 8px;cursor:pointer;z-index:20;font-size:0.7rem;color:#f00;}
+        .glitch{animation:glitchText 0.1s 2;}
+        @keyframes glitchText{0%{transform:translate(1px,-1px);opacity:0.8;}100%{transform:translate(-1px,1px);opacity:1;}}
+        .voice-active{color:#f00;text-shadow:0 0 8px red;}
+    </style>
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    <div class="scanlines"></div>
+    <nav class="system-nav">
+        <a href="dashboard.html">[HUB]</a>
+        <a href="training.html">[TRAINING]</a>
+        <a href="subscription.html">[SUBSCRIPTION]</a>
+        <a href="shop.html">[SHOP]</a>
+        <a href="logs.html">[LOGS]</a>
+        <a href="terminal.html">[TERMINAL]</a>
+        <a href="chat.html" class="active-nav">[GLOBAL CHAT]</a>
+    </nav>
+    <div class="chat-container">
+        <div id="messages" class="messages-area"></div>
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="Whisper to the void...">
+            <button id="sendBtn">⟁ SEND ⟁</button>
+        </div>
+    </div>
+    <div class="status" id="connStatus">⚫ DISCONNECTED</div>
+    <div class="sound-toggle" id="soundToggle">🔊 VOICE: ON</div>
+    <script>
+        const WS_URL = "wss://b65e-49-37-42-14.ngrok-free.app/ws";
+        let socket = null, myName = "unknown", voiceEnabled = true, audioCtx = null, noiseNode = null;
+        const msgDiv = document.getElementById('messages');
+        const input = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const statusDiv = document.getElementById('connStatus');
+        const soundToggle = document.getElementById('soundToggle');
+
+        function speak(text) {
+            if (!voiceEnabled || !window.speechSynthesis) return;
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.rate = 0.65; utter.pitch = 0.5; utter.volume = 0.5;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utter);
+        }
+
+        function initAmbient() {
+            if (!voiceEnabled || audioCtx) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const bufferSize = 4096;
+            noiseNode = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+            noiseNode.onaudioprocess = (e) => {
+                const out = e.outputBuffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) out[i] = (Math.random() * 2 - 1) * 0.05;
+            };
+            const gain = audioCtx.createGain();
+            gain.gain.value = 0.1;
+            noiseNode.connect(gain);
+            gain.connect(audioCtx.destination);
+            noiseNode.noteOn ? noiseNode.noteOn(0) : noiseNode.start();
+            audioCtx.resume();
+        }
+
+        function toggleSound() {
+            voiceEnabled = !voiceEnabled;
+            soundToggle.innerText = voiceEnabled ? "🔊 VOICE: ON" : "🔇 VOICE: OFF";
+            if (voiceEnabled && !audioCtx) initAmbient();
+        }
+        soundToggle.addEventListener('click', toggleSound);
+
+        function addMessage(type, sender, content, isSystem=false, isAI=false) {
+            const msg = document.createElement('div');
+            msg.className = 'message';
+            const time = new Date().toLocaleTimeString();
+            let html = `<span class="timestamp">[${time}]</span>`;
+            if (type === 'identity') html += `<span class="system">⚡ You are now: ${content}</span>`;
+            else if (isSystem) html += `<span class="system">🔮 ${content}</span>`;
+            else if (isAI) html += `<span class="ai">⛧ ${sender}: ${content} ⛧</span>`;
+            else html += `<span class="chat">👁️ <strong>${sender}</strong>: ${content}</span>`;
+            msg.innerHTML = html;
+            msgDiv.appendChild(msg);
+            msgDiv.scrollTop = msgDiv.scrollHeight;
+            if (Math.random() < 0.2) msg.classList.add('glitch');
+            return msg;
+        }
+
+        function connect() {
+            socket = new WebSocket(WS_URL);
+            socket.onopen = () => { statusDiv.innerHTML = "🟢 CONNECTED"; statusDiv.style.color="#0f0"; initAmbient(); };
+            socket.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                if (data.type === 'identity') {
+                    myName = data.name;
+                    addMessage('identity', null, myName);
+                    speak(`You are ${myName}`);
+                } else if (data.type === 'system') {
+                    addMessage('system', null, data.content, true);
+                    if (data.content.includes("entered")) speak("A new subject has joined.");
+                    else if (!data.content.includes("consumed")) speak(data.content);
+                } else if (data.type === 'chat') {
+                    addMessage('chat', data.sender, data.content);
+                    if (voiceEnabled && data.sender !== myName) speak(`${data.sender} says: ${data.content}`);
+                } else if (data.type === 'ai') {
+                    addMessage('ai', data.sender, data.content, false, true);
+                    speak(data.content);
+                }
+            };
+            socket.onclose = () => { statusDiv.innerHTML = "🔴 RETRYING..."; statusDiv.style.color="#f00"; setTimeout(connect, 5000); };
+            socket.onerror = () => {};
+        }
+        connect();
+
+        sendBtn.onclick = () => {
+            const txt = input.value.trim();
+            if (!txt || !socket || socket.readyState !== WebSocket.OPEN) return;
+            socket.send(JSON.stringify({type:"chat", content:txt}));
+            input.value = '';
+        };
+        input.onkeypress = (e) => { if(e.key === 'Enter') sendBtn.onclick(); };
+    </script>
+</body>
+</html>

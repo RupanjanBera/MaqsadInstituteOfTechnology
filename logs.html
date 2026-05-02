@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MAQSAD :: SYSTEM LOGS</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;cursor:crosshair;}
+        body{background:#000;color:#0f0;font-family:'Courier New',monospace;}
+        .noise{position:fixed;inset:0;background:repeating-radial-gradient(circle at 30% 30%, rgba(0,255,0,0.04) 0px, #000 2px);pointer-events:none;animation:drift 0.3s infinite;}
+        .scan{position:fixed;inset:0;background:repeating-linear-gradient(0deg, rgba(255,0,0,0.05) 0px, rgba(255,0,0,0.05) 1px, transparent 1px, transparent 4px);pointer-events:none;}
+        @keyframes drift{0%{transform:translate(0);}100%{transform:translate(1px,1px);}}
+        .system-nav{display:flex;gap:1.2rem;padding:1rem;background:#0a0a0a;border-bottom:2px solid #0f0;flex-wrap:wrap;}
+        .system-nav a{color:#0f0;text-decoration:none;font-weight:bold;}
+        .system-nav a:hover,.active-nav{color:#f00;border-bottom:2px solid #f00;}
+        main{padding:2rem;}
+        .log-window{background:#010101;height:65vh;overflow-y:auto;border:2px solid #0f0;padding:1rem;margin-top:1rem;font-size:0.85rem;}
+        .log-line{font-family:monospace;margin-bottom:6px;border-bottom:1px dotted #1a4a1a;}
+        .corrupted{color:#ff6600;text-decoration:line-through wavy #f00;}
+        .glitch{animation:glitchLog 0.1s 2;}
+        @keyframes glitchLog{0%{transform:translateX(0);}50%{transform:translateX(4px);}100%{transform:translateX(0);}}
+    </style>
+</head>
+<body>
+<div class="noise"></div><div class="scan"></div>
+<nav class="system-nav">
+    <a href="dashboard.html">[HUB]</a><a href="training.html">[TRAINING]</a>
+    <a href="subscription.html">[SUBSCRIPTION]</a><a href="shop.html">[SHOP]</a>
+    <a href="logs.html" class="active-nav">[LOGS]</a>
+    <a href="terminal.html">[TERMINAL]</a><a href="chat.html">[GLOBAL CHAT]</a>
+</nav>
+<main>
+    <h2>REAL-TIME SYSTEM LOGS [CORRUPTED]</h2>
+    <div id="logContainer" class="log-window"></div>
+</main>
+<script>
+    const logDiv = document.getElementById('logContainer');
+    const logEntries = [
+        "[SYSTEM] heartbeat detected from unrecognized terminal.",
+        "[███] USER TRACE: unknown entity browsing MAQSAD.",
+        "[ERROR] Neural handshake failed. Resetting.",
+        "[AUDIT] 0xDEADBEEF: anomalous session.",
+        "[WARNING] Ghost packet from internal server.",
+        "> whoami: subject_04 - classified",
+        "[REDACTED] ██████████ signal intercepted.",
+        "INSTITUTE: You are being catalogued.",
+        "LOG_782: surveillance initiated.",
+        "! hidden message: they are inside your walls",
+        "⛧ PERSONALIZED MESSAGE: we see you, user.",
+        "LOG_CORRUPT: memory leak at 0xFFFFFF"
+    ];
+    function addLog(msg, corrupt = false){
+        const line = document.createElement('div');
+        line.className = 'log-line';
+        if(corrupt || Math.random()<0.25) line.classList.add('corrupted');
+        line.innerHTML = `> ${msg}`;
+        logDiv.appendChild(line);
+        logDiv.scrollTop = logDiv.scrollHeight;
+        if(logDiv.children.length>80) logDiv.removeChild(logDiv.children[0]);
+        if(Math.random()<0.2) line.classList.add('glitch');
+    }
+    let idx=0;
+    function stream(){
+        if(idx<logEntries.length){ addLog(logEntries[idx], true); idx++; setTimeout(stream, 1100); }
+        else{
+            setInterval(()=>{
+                const randMsg = `[${Math.floor(Math.random()*9999)}] corrupted trace :: ${Math.random().toString(36).substring(5)}`;
+                addLog(randMsg, true);
+                if(Math.random()<0.15) addLog("⚠️ hidden log: you are not alone ⚠️", true);
+            }, 2000);
+        }
+    }
+    stream();
+    setTimeout(()=>{ addLog("> SECRET: THE DOOR IS IN THE COMMANDS (terminal)", false); }, 4500);
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MAQSAD :: LOGIN</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;cursor:crosshair;}
+        body{background:#000;color:#0f0;font-family:'Courier New',monospace;height:100vh;display:flex;justify-content:center;align-items:center;position:relative;}
+        .noise{position:fixed;inset:0;background:repeating-radial-gradient(circle at 30% 40%, rgba(255,0,0,0.05) 0px, #000 3px);pointer-events:none;animation:drift 0.2s infinite;}
+        .scan{position:fixed;inset:0;background:repeating-linear-gradient(0deg, rgba(0,255,0,0.08) 0px, rgba(0,255,0,0.08) 1px, transparent 1px, transparent 5px);pointer-events:none;}
+        @keyframes drift{0%{transform:translate(0);}100%{transform:translate(1px,1px);}}
+        .login-panel{background:#050505;border:2px solid #0f0;padding:2rem;width:400px;box-shadow:0 0 30px rgba(0,255,0,0.2);z-index:10;animation:borderPulse 3s infinite;}
+        @keyframes borderPulse{0%{border-color:#0f0;}50%{border-color:#f00;}100%{border-color:#0f0;}}
+        h1{text-align:center;animation:glitch 0.8s infinite;margin-bottom:1rem;}
+        @keyframes glitch{0%{text-shadow:-2px 0 red,2px 0 green;}100%{text-shadow:2px 0 red,-2px 0 green;}}
+        input{width:100%;background:#111;border:1px solid #0f0;color:#0f0;padding:10px;margin:12px 0;font-family:monospace;outline:none;}
+        input:focus{border-color:#f00;box-shadow:0 0 8px red;}
+        button{width:100%;background:#000;border:2px solid #0f0;color:#0f0;padding:10px;cursor:pointer;font-weight:bold;transition:0.2s;}
+        button:hover{background:#0f0;color:#000;box-shadow:0 0 15px #0f0;}
+        .response{min-height:60px;margin-top:1rem;font-size:0.9rem;text-align:center;}
+        .blood{color:#ff0000;text-shadow:0 0 3px red;}
+        .green{color:#0f0;}
+        .shake{animation:shakeAnim 0.2s;}
+        @keyframes shakeAnim{0%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}100%{transform:translateX(0);}}
+    </style>
+</head>
+<body>
+<div class="noise"></div><div class="scan"></div>
+<div class="login-panel">
+    <h1>[SYSTEM LOCK]</h1>
+    <input type="text" id="userId" placeholder="subject_0x??">
+    <input type="password" id="password" placeholder="••••••••">
+    <button id="authBtn">⟁ AUTHENTICATE ⟁</button>
+    <div id="loginResponse" class="response"></div>
+</div>
+<script>
+    const authBtn = document.getElementById('authBtn');
+    const responseDiv = document.getElementById('loginResponse');
+    const userId = document.getElementById('userId');
+    const pwd = document.getElementById('password');
+    const creepyMsgs = [
+        "INVALID IDENTITY // YOUR BIOMETRICS ARE KNOWN",
+        "WE KNOW YOU. YOUR SIGNATURE IS TRACED.",
+        "DO YOU THINK THIS IS A GAME?",
+        "ACCESS DENIED: YOUR SOUL IS REGISTERED.",
+        "THE INSTITUTE HAS ALREADY TAGGED YOU."
+    ];
+    authBtn.addEventListener('click', () => {
+        const input = userId.value.trim() + pwd.value;
+        if (!input) {
+            responseDiv.innerHTML = "<span class='blood'>⚠️ EMPTY. YOU CANNOT HIDE ⚠️</span>";
+            return;
+        }
+        const isGranted = Math.random() < 0.3;
+        if (isGranted) {
+            responseDiv.innerHTML = "<span class='green'>ACCESS GRANTED █ REDIRECTING...</span>";
+            document.body.classList.add('shake');
+            setTimeout(() => document.body.classList.remove('shake'), 300);
+            setTimeout(() => window.location.href = 'dashboard.html', 1100);
+        } else {
+            const randomMsg = creepyMsgs[Math.floor(Math.random() * creepyMsgs.length)];
+            responseDiv.innerHTML = `<span class='blood'>${randomMsg}</span>`;
+            document.body.classList.add('shake');
+            setTimeout(() => document.body.classList.remove('shake'), 400);
+        }
+    });
+</script>
+</body>
+</html>

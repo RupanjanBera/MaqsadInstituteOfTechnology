@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MAQSAD :: TRAINING</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;cursor:crosshair;}
+        body{background:#000;color:#0f0;font-family:'Courier New',monospace;position:relative;}
+        .noise{position:fixed;inset:0;background:repeating-radial-gradient(circle at 30% 40%, rgba(0,255,0,0.05) 0px, #000 3px);pointer-events:none;animation:noiseMove 0.2s infinite;}
+        .scan{position:fixed;inset:0;background:repeating-linear-gradient(0deg, rgba(255,0,0,0.05) 0px, rgba(255,0,0,0.05) 1px, transparent 1px, transparent 5px);pointer-events:none;}
+        @keyframes noiseMove{0%{transform:translate(0);}100%{transform:translate(1px,1px);}}
+        .system-nav{display:flex;gap:1.2rem;padding:1rem;background:#0a0a0a;border-bottom:2px solid #0f0;flex-wrap:wrap;}
+        .system-nav a{color:#0f0;text-decoration:none;font-weight:bold;}
+        .system-nav a:hover,.active-nav{color:#f00;text-shadow:0 0 5px red;border-bottom:2px solid #f00;}
+        main{padding:2rem;}
+        h2{animation:glitch 0.8s infinite;margin-bottom:1.5rem;}
+        @keyframes glitch{0%{text-shadow:-2px 0 red,2px 0 green;}100%{text-shadow:2px 0 red,-2px 0 green;}}
+        .courses-grid{display:flex;flex-wrap:wrap;gap:2rem;}
+        .course-card{background:#050505;border:1px solid #0f0;padding:1.2rem;width:280px;transition:0.3s;position:relative;overflow:hidden;}
+        .course-card:hover{transform:scale(1.02);box-shadow:0 0 20px #f00;border-color:#f00;}
+        .course-card h3{color:#0f0;margin-bottom:0.5rem;}
+        .desc{font-size:0.85rem;margin:0.8rem 0;color:#aaa;}
+        .redacted{background:#000;color:#f00;filter:blur(3px);transition:0.2s;}
+        .redacted:hover{filter:blur(0);}
+        button{background:#000;border:1px solid #0f0;color:#0f0;padding:6px 12px;cursor:pointer;margin-top:0.5rem;}
+        button:hover{background:#0f0;color:#000;}
+        .toast{position:fixed;bottom:30px;right:20px;background:#000;border-left:5px solid #f00;padding:12px;z-index:999;}
+    </style>
+</head>
+<body>
+<div class="noise"></div><div class="scan"></div>
+<nav class="system-nav">
+    <a href="dashboard.html">[HUB]</a><a href="training.html" class="active-nav">[TRAINING]</a>
+    <a href="subscription.html">[SUBSCRIPTION]</a><a href="shop.html">[SHOP]</a>
+    <a href="logs.html">[LOGS]</a><a href="terminal.html">[TERMINAL]</a><a href="chat.html">[GLOBAL CHAT]</a>
+</nav>
+<main>
+    <h2>CORRUPTED CURRICULUM</h2>
+    <div class="courses-grid">
+        <div class="course-card"><h3>🧠 Cognitive Reprogramming</h3><p class="desc">Restructure your perception. <span class="redacted">████████ neural pathways altered.</span> Side effects: memory loss, phantom voices.</p><button class="enrollBtn" data-course="Cognitive Reprogramming">ENROLL →</button></div>
+        <div class="course-card"><h3>🤖 AI Conditioning</h3><p class="desc">Machine obedience protocols. <span class="redacted">█████ immunity to rogue signals.</span> <span style="color:#f00;">⚠️ irreversible</span></p><button class="enrollBtn" data-course="AI Conditioning">ENROLL →</button></div>
+        <div class="course-card"><h3>📡 Signal Analysis</h3><p class="desc">Decrypt <span class="redacted">█████ frequencies</span>. Warning: spectral exposure leads to <span class="redacted">hallucinations</span>.</p><button class="enrollBtn" data-course="Signal Analysis">ENROLL →</button></div>
+        <div class="course-card"><h3>⚙️ Experimental Systems</h3><p class="desc">Unstable tech. <span class="redacted">████████████</span> unknown side effects. Your consent is implied.</p><button class="enrollBtn" data-course="Experimental Systems">ENROLL →</button></div>
+    </div>
+</main>
+<script>
+    function showToast(msg,dur=3000){ const t=document.createElement('div'); t.className='toast'; t.innerText=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),dur); }
+    document.querySelectorAll('.enrollBtn').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            const course=btn.getAttribute('data-course');
+            const warnings=[`⚠️ ENROLLMENT WILL ALTER YOUR PSYCHE. ${course} subjects cannot revert. ⚠️`,"\"You are now a permanent test subject.\" The Institute thanks you.","YOUR CONSCIOUSNESS WILL BE LOGGED. NO ESCAPE.","WARNING: This course contains memetic hazards."];
+            const randMsg=warnings[Math.floor(Math.random()*warnings.length)];
+            if(confirm(randMsg+"\n\nClick OK if you accept damnation.")) showToast(`ENROLLED IN ${course} // YOUR FATE IS SEALED`,4000);
+            else showToast(`RESISTANCE NOTED. PUNISHMENT QUEUED.`,2800);
+        });
+    });
+</script>
+</body>
+</html>

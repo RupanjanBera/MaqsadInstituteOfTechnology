@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>[REDACTED]</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;cursor:crosshair;}
+        body{background:#000;color:#ff0000;font-family:'Courier New',monospace;height:100vh;display:flex;justify-content:center;align-items:center;position:relative;}
+        .noise{position:fixed;inset:0;background:repeating-radial-gradient(circle at 20% 40%, rgba(255,0,0,0.15) 0px, #000 3px);pointer-events:none;animation:staticRed 0.15s infinite;}
+        .scan{position:fixed;inset:0;background:repeating-linear-gradient(0deg, rgba(255,0,0,0.1) 0px, rgba(255,0,0,0.1) 1px, transparent 1px, transparent 5px);pointer-events:none;}
+        @keyframes staticRed{0%{opacity:0.5;}100%{opacity:0.9;}}
+        .hidden-container{text-align:center;z-index:10;animation:pulseRed 1.5s infinite;}
+        @keyframes pulseRed{0%{text-shadow:0 0 2px red;}100%{text-shadow:0 0 30px #f00;}}
+        h1{font-size:3rem;margin-bottom:2rem;}
+        .cryptic-box{border:2px solid #f00;background:#0a0000;padding:2rem;margin-top:1rem;width:500px;max-width:90%;}
+        p{margin:0.8rem 0;font-size:1rem;}
+        button{background:#000;border:2px solid #f00;color:#f00;padding:10px 24px;cursor:pointer;margin-top:1.5rem;font-weight:bold;}
+        button:hover{background:#f00;color:#000;}
+    </style>
+</head>
+<body>
+<div class="noise"></div><div class="scan"></div>
+<div class="hidden-container">
+    <h1>YOU FOUND US</h1>
+    <div class="cryptic-box">
+        <p>➤ CRYPTIC CODE: 0x4D 0x41 0x51 0x53 0x41 0x44</p>
+        <p>➤ DISTORTION: THE INSTITUTE EXISTS BETWEEN REALMS</p>
+        <p>➤ MESSAGE: "YOUR CURIOSITY WILL BE YOUR UNDOING"</p>
+        <p>➤ NODE: ████████████████</p>
+        <p>➤ YOUR IDENTITY HAS BEEN PERMANENTLY LOGGED</p>
+        <button id="escapeBtn">⟁ ESCAPE (BUT YOU CAN'T) ⟁</button>
+    </div>
+</div>
+<script>
+    document.getElementById('escapeBtn').addEventListener('click',()=>{
+        window.location.href = 'terminal.html';
+    });
+    setInterval(()=>{
+        const container = document.querySelector('.hidden-container');
+        if(Math.random()<0.4) container.style.filter = 'blur(3px)';
+        else container.style.filter = 'none';
+    }, 600);
+</script>
+</body>
+</html>

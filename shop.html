@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MAQSAD :: BLACK MARKET</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;cursor:crosshair;}
+        body{background:#000;color:#0f0;font-family:'Courier New',monospace;}
+        .noise{position:fixed;inset:0;background:repeating-radial-gradient(circle at 20% 40%, rgba(0,255,0,0.07) 0px, #000 3px);pointer-events:none;animation:staticAnim 0.2s infinite;}
+        .scan{position:fixed;inset:0;background:repeating-linear-gradient(0deg, rgba(255,0,0,0.05) 0px, rgba(255,0,0,0.05) 1px, transparent 1px, transparent 5px);pointer-events:none;}
+        @keyframes staticAnim{0%{opacity:0.4;}100%{opacity:0.9;}}
+        .system-nav{display:flex;gap:1.2rem;padding:1rem;background:#0a0a0a;border-bottom:2px solid #0f0;flex-wrap:wrap;}
+        .system-nav a{color:#0f0;text-decoration:none;font-weight:bold;}
+        .system-nav a:hover,.active-nav{color:#f00;border-bottom:2px solid #f00;}
+        main{padding:2rem;}
+        .products{display:flex;flex-wrap:wrap;gap:2rem;}
+        .product{background:#050505;border:1px solid #0f0;padding:1rem;width:260px;transition:0.3s;}
+        .product:hover{box-shadow:0 0 15px #f00;border-color:#f00;}
+        .image-placeholder{background:#121212;height:100px;display:flex;align-items:center;justify-content:center;color:#f00;border:1px dashed red;margin-bottom:10px;}
+        button{background:#000;border:1px solid #0f0;color:#0f0;padding:6px;width:100%;cursor:pointer;margin-top:0.5rem;}
+        button:hover{background:#0f0;color:#000;}
+        .toast{position:fixed;bottom:30px;right:20px;background:#000;border-left:5px solid #f00;padding:12px;z-index:999;}
+        .glitch-flash{animation:flash 0.1s 2;}
+        @keyframes flash{0%{background:#fff;}100%{background:#000;}}
+    </style>
+</head>
+<body>
+<div class="noise"></div><div class="scan"></div>
+<nav class="system-nav">
+    <a href="dashboard.html">[HUB]</a><a href="training.html">[TRAINING]</a>
+    <a href="subscription.html">[SUBSCRIPTION]</a><a href="shop.html" class="active-nav">[SHOP]</a>
+    <a href="logs.html">[LOGS]</a><a href="terminal.html">[TERMINAL]</a><a href="chat.html">[GLOBAL CHAT]</a>
+</nav>
+<main>
+    <h2>FORBIDDEN INVENTORY</h2>
+    <div class="products">
+        <div class="product"><div class="image-placeholder">[IMAGE REDACTED]</div><h3>Neural Interface Device</h3><p>Direct brain hacking module. Side effects: █████████.</p><button class="cartBtn" data-item="Neural Interface Device">ADD TO CART</button></div>
+        <div class="product"><div class="image-placeholder">[DATA VOID]</div><h3>Signal Scrambler</h3><p>Hide from surveillance... or attract deeper attention.</p><button class="cartBtn" data-item="Signal Scrambler">ADD TO CART</button></div>
+        <div class="product"><div class="image-placeholder">[UNKNOWN CORE]</div><h3>AI Core</h3><p>Forbidden fragment of MAQSAD intelligence.</p><button class="cartBtn" data-item="AI Core">ADD TO CART</button></div>
+        <div class="product"><div class="image-placeholder">[CLASSIFIED EYE]</div><h3>Surveillance Module</h3><p>Watch everyone. But the Institute watches you.</p><button class="cartBtn" data-item="Surveillance Module">ADD TO CART</button></div>
+    </div>
+</main>
+<script>
+    function showToast(msg,dur=3500){ const t=document.createElement('div'); t.className='toast'; t.innerText=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),dur); }
+    document.querySelectorAll('.cartBtn').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            const item=btn.getAttribute('data-item');
+            showToast(`⚠️ ITEM LINKED TO YOU: ${item} ⚠️`,3500);
+            document.body.classList.add('glitch-flash');
+            setTimeout(()=>document.body.classList.remove('glitch-flash'),200);
+        });
+    });
+</script>
+</body>
+</html>

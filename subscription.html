@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MAQSAD :: SUBSCRIPTION</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;cursor:crosshair;}
+        body{background:#000;color:#0f0;font-family:'Courier New',monospace;}
+        .noise{position:fixed;inset:0;background:repeating-radial-gradient(circle at 40% 60%, rgba(255,0,0,0.05) 0px, #000 2px);pointer-events:none;animation:drift 0.25s infinite;}
+        .scan{position:fixed;inset:0;background:repeating-linear-gradient(0deg, rgba(0,255,0,0.06) 0px, rgba(0,255,0,0.06) 1px, transparent 1px, transparent 4px);pointer-events:none;}
+        @keyframes drift{0%{transform:translate(0);}100%{transform:translate(2px,1px);}}
+        .system-nav{display:flex;gap:1.2rem;padding:1rem;background:#0a0a0a;border-bottom:2px solid #0f0;flex-wrap:wrap;}
+        .system-nav a{color:#0f0;text-decoration:none;font-weight:bold;}
+        .system-nav a:hover,.active-nav{color:#f00;border-bottom:2px solid #f00;}
+        main{padding:2rem;}
+        h2{animation:glitch 0.6s infinite;margin-bottom:1.5rem;}
+        @keyframes glitch{0%{text-shadow:-2px 0 red,2px 0 green;}100%{text-shadow:2px 0 red,-2px 0 green;}}
+        .plans{display:flex;flex-wrap:wrap;gap:2rem;}
+        .plan-card{background:#050505;border:2px solid #0f0;padding:1.5rem;width:280px;transition:0.3s;}
+        .plan-card:hover{border-color:#f00;transform:translateY(-8px);box-shadow:0 0 20px #f00;}
+        .blood-border{border-color:#f00;}
+        .blood-text{color:#f00;}
+        button{background:#000;border:1px solid #0f0;color:#0f0;padding:8px;width:100%;cursor:pointer;margin-top:1rem;font-weight:bold;}
+        button:hover{background:#0f0;color:#000;}
+        .toast{position:fixed;bottom:30px;right:20px;background:#000;border-left:5px solid #f00;padding:12px;z-index:999;}
+    </style>
+</head>
+<body>
+<div class="noise"></div><div class="scan"></div>
+<nav class="system-nav">
+    <a href="dashboard.html">[HUB]</a><a href="training.html">[TRAINING]</a>
+    <a href="subscription.html" class="active-nav">[SUBSCRIPTION]</a><a href="shop.html">[SHOP]</a>
+    <a href="logs.html">[LOGS]</a><a href="terminal.html">[TERMINAL]</a><a href="chat.html">[GLOBAL CHAT]</a>
+</nav>
+<main>
+    <h2>BECOME A SUBJECT</h2>
+    <div class="plans">
+        <div class="plan-card"><h3>INITIATE</h3><p>Basic surveillance package. You will be gently observed. Dreams may sync.</p><button class="joinBtn" data-plan="Initiate">⟁ JOIN ⟁</button></div>
+        <div class="plan-card"><h3>OBSERVER</h3><p>Passive monitoring of other subjects. Your own data will be <span class="redacted">██████</span>. Unseen chains.</p><button class="joinBtn" data-plan="Observer">⟁ JOIN ⟁</button></div>
+        <div class="plan-card blood-border"><h3 class="blood-text">INTERNAL SUBJECT</h3><p>Total neural integration. You become a node. No privacy remaining. Eternal loop.</p><button class="joinBtn" data-plan="Internal Subject">⟁ JOIN ⟁</button></div>
+    </div>
+</main>
+<script>
+    function showToast(msg,dur=4000){ const t=document.createElement('div'); t.className='toast'; t.innerText=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),dur); }
+    document.querySelectorAll('.joinBtn').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            const plan=btn.getAttribute('data-plan');
+            const eerie=[`You have been marked. ${plan} tier accepts your soul as collateral.`,`The contract is signed in your blood // Welcome to the hive.`,`Subscription activated: your perception will be rewritten. ${plan} has no refund.`,`ERROR: consciousness transferred to MAQSAD mainframe.`];
+            showToast(eerie[Math.floor(Math.random()*eerie.length)],5000);
+        });
+    });
+</script>
+</body>
+</html>
