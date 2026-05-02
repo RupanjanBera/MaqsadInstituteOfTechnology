@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>MAQSAD :: GLOBAL CHAT</title>
     <style>
-        /* RESET & BASE – full height layout */
         * {
             margin: 0;
             padding: 0;
@@ -27,7 +26,6 @@
             position: relative;
         }
 
-        /* Horror overlays – fixed, no impact on flex */
         .noise {
             position: fixed;
             top: 0;
@@ -56,7 +54,6 @@
             100% { opacity: 0.7; transform: translate(2px,2px); }
         }
 
-        /* Navigation – fixed at top */
         .system-nav {
             display: flex;
             flex-wrap: wrap;
@@ -84,7 +81,6 @@
             border-bottom: 2px solid #ff0000;
         }
 
-        /* CHAT LAYOUT – uses flex to keep input always visible */
         .chat-wrapper {
             flex: 1;
             display: flex;
@@ -129,7 +125,6 @@
             margin-right: 8px;
         }
 
-        /* INPUT AREA – always visible at bottom, no overlap */
         .input-area {
             display: flex;
             gap: 8px;
@@ -177,13 +172,13 @@
             box-shadow: 0 0 12px #0f0;
         }
 
-        /* Fixed status widgets – low z-index, no layout interference */
+        /* Fixed widgets - repositioned to avoid input overlap */
         .status {
             position: fixed;
-            bottom: 5px;
-            right: 5px;
+            bottom: 8px;
+            right: 8px;
             background: rgba(0,0,0,0.7);
-            padding: 3px 8px;
+            padding: 4px 8px;
             font-size: 0.6rem;
             border-radius: 4px;
             z-index: 20;
@@ -194,11 +189,11 @@
 
         .sound-toggle {
             position: fixed;
-            bottom: 5px;
-            left: 5px;
+            bottom: 8px;
+            left: 8px;
             background: rgba(0,0,0,0.7);
             border: 1px solid #ff0000;
-            padding: 3px 8px;
+            padding: 4px 8px;
             cursor: pointer;
             z-index: 20;
             font-size: 0.6rem;
@@ -209,18 +204,19 @@
 
         .ip-tracker {
             position: fixed;
-            bottom: 5px;
+            top: auto;
+            bottom: 8px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            border-top: 2px solid #ff0000;
-            padding: 3px 10px;
-            font-size: 0.55rem;
+            background: rgba(0,0,0,0.85);
+            border: 1px solid #ff0000;
+            padding: 4px 12px;
+            font-size: 0.6rem;
             z-index: 20;
             color: #ff8888;
             white-space: nowrap;
             font-family: monospace;
-            border-radius: 0 0 8px 8px;
+            border-radius: 20px;
             pointer-events: none;
             backdrop-filter: blur(4px);
         }
@@ -245,15 +241,48 @@
             border-radius: 3px;
         }
 
-        /* Mobile tweaks – ensure input is touchable and visible */
+        /* Mobile: move IP tracker to top so it doesn't cover input */
         @media (max-width: 768px) {
-            .input-area { padding: 0.6rem; gap: 6px; }
-            #messageInput { padding: 10px; font-size: 0.9rem; min-height: 44px; }
-            button { padding: 0 14px; min-height: 44px; font-size: 0.85rem; }
-            .system-nav { gap: 0.2rem; padding: 0.4rem; }
-            .system-nav a { font-size: 0.65rem; padding: 0.2rem 0.4rem; }
-            .ip-tracker { white-space: normal; text-align: center; width: 85%; bottom: 38px; font-size: 0.5rem; }
-            .status, .sound-toggle { font-size: 0.55rem; bottom: 4px; }
+            .ip-tracker {
+                top: 60px;
+                bottom: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                white-space: normal;
+                text-align: center;
+                width: 90%;
+                font-size: 0.55rem;
+                padding: 4px 8px;
+                border-radius: 0 0 12px 12px;
+                background: rgba(0,0,0,0.9);
+                border-top: none;
+                z-index: 25;
+            }
+            .status, .sound-toggle {
+                bottom: 6px;
+            }
+            .input-area {
+                padding: 0.6rem;
+                gap: 6px;
+            }
+            #messageInput {
+                padding: 10px;
+                font-size: 0.9rem;
+                min-height: 44px;
+            }
+            button {
+                padding: 0 14px;
+                min-height: 44px;
+                font-size: 0.85rem;
+            }
+            .system-nav {
+                gap: 0.2rem;
+                padding: 0.4rem;
+            }
+            .system-nav a {
+                font-size: 0.65rem;
+                padding: 0.2rem 0.4rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -261,7 +290,7 @@
             .timestamp { font-size: 0.55rem; }
             button { font-size: 0.75rem; padding: 0 10px; min-height: 40px; }
             #messageInput { font-size: 0.85rem; padding: 8px; min-height: 40px; }
-            .ip-tracker { bottom: 42px; width: 92%; }
+            .ip-tracker { top: 55px; font-size: 0.5rem; width: 95%; }
         }
     </style>
 </head>
@@ -295,7 +324,7 @@
 
     <script>
         // --- Configuration ---
-        // YOUR NGROK WEBSOCKET URL (WSS)
+        // Replace with your actual ngrok wss URL
         const WS_URL = "wss://b65e-49-37-42-14.ngrok-free.app/ws";
         let socket = null;
         let myName = "unknown";
@@ -303,7 +332,6 @@
         let reconnectAttempts = 0;
         let reconnectTimer = null;
 
-        // DOM elements
         const messagesDiv = document.getElementById('messages');
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -321,7 +349,7 @@
                 const region = data.region || '';
                 const country = data.country_name || 'Unknown';
                 const loc = city + (region ? `, ${region}` : '') + `, ${country}`;
-                ipTracker.innerHTML = `⚠️ YOUR IP: ${ip} | LOCATION: ${loc} | 🔴 YOU ARE BEING TRACKED BY MAQSAD`;
+                ipTracker.innerHTML = `⚠️ IP: ${ip} | ${loc} | 🔴 TRACKED`;
                 setInterval(() => {
                     if (Math.random() < 0.2) {
                         ipTracker.style.animation = 'glitchText 0.2s';
@@ -329,12 +357,12 @@
                     }
                 }, 12000);
             } catch (err) {
-                ipTracker.innerHTML = '⚠️ UNABLE TO HIDE: YOUR DIGITAL SIGNATURE IS LOGGED';
+                ipTracker.innerHTML = '⚠️ YOUR SIGNATURE IS LOGGED';
             }
         }
         fetchIP();
 
-        // --- Creepy voice synthesis ---
+        // --- Creepy voice ---
         function speak(text) {
             if (!voiceEnabled || !window.speechSynthesis) return;
             const utterance = new SpeechSynthesisUtterance(text);
@@ -354,7 +382,6 @@
             if (voiceEnabled) speak("Voice reconnected. You cannot hide.");
         };
 
-        // --- Add message to chat (with HTML escape) ---
         function escapeHtml(str) {
             return str.replace(/[&<>]/g, function(m) {
                 if (m === '&') return '&amp;';
@@ -371,12 +398,11 @@
             let html = `<span class="timestamp">[${time}]</span>`;
 
             if (type === 'identity') {
-                html += `<span class="system">⚡ You are now known as: ${escapeHtml(content)}</span>`;
+                html += `<span class="system">⚡ You are now: ${escapeHtml(content)}</span>`;
                 speak(`You are ${content}`);
             } else if (isSystem) {
                 html += `<span class="system">🔮 ${escapeHtml(content)}</span>`;
-                if (content.includes("entered")) speak("A new subject has joined the hive.");
-                else if (content.includes("consumed")) speak("A soul has been taken.");
+                if (content.includes("entered")) speak("A new subject joined.");
                 else if (!content.includes("Reconnecting")) speak(content);
             } else if (isAI) {
                 html += `<span class="ai">⛧ ${escapeHtml(sender)}: ${escapeHtml(content)} ⛧</span>`;
@@ -395,12 +421,9 @@
                 setTimeout(() => msgDiv.classList.remove('glitch'), 200);
             }
 
-            while (messagesDiv.children.length > 500) {
-                messagesDiv.removeChild(messagesDiv.firstChild);
-            }
+            while (messagesDiv.children.length > 500) messagesDiv.removeChild(messagesDiv.firstChild);
         }
 
-        // --- WebSocket connection with auto-reconnect ---
         function connectWebSocket() {
             if (socket && socket.readyState === WebSocket.OPEN) return;
             if (reconnectTimer) clearTimeout(reconnectTimer);
@@ -413,7 +436,7 @@
                 connStatus.innerHTML = "🟢 CONNECTED";
                 connStatus.style.color = "#0f0";
                 reconnectAttempts = 0;
-                addMessage('system', null, "Connected to MAQSAD collective. You are not alone.", true);
+                addMessage('system', null, "Connected to MAQSAD collective.", true);
             };
 
             socket.onmessage = (event) => {
@@ -429,42 +452,31 @@
                     } else if (data.type === 'ai') {
                         addMessage('ai', data.sender, data.content, false, true);
                     }
-                } catch (err) {
-                    console.error("Parse error", err);
-                }
+                } catch (err) { console.error(err); }
             };
 
             socket.onclose = () => {
                 connStatus.innerHTML = "🔴 DISCONNECTED";
                 connStatus.style.color = "#f00";
-                addMessage('system', null, "Connection lost. Reconnecting in 5 seconds...", true);
+                addMessage('system', null, "Reconnecting in 5s...", true);
                 reconnectTimer = setTimeout(() => {
                     if (reconnectAttempts < 20) {
                         reconnectAttempts++;
                         connectWebSocket();
-                    } else {
-                        connStatus.innerHTML = "💀 FAILED";
-                    }
+                    } else connStatus.innerHTML = "💀 FAILED";
                 }, 5000);
-            };
-
-            socket.onerror = (err) => {
-                console.error("WebSocket error", err);
-                connStatus.innerHTML = "⚠️ ERROR";
             };
         }
 
-        // --- Send message ---
         function sendMessage() {
             const text = messageInput.value.trim();
             if (!text) return;
             if (!socket || socket.readyState !== WebSocket.OPEN) {
-                addMessage('system', null, "Not connected to hive. Message not sent.", true);
+                addMessage('system', null, "Not connected to hive.", true);
                 return;
             }
             socket.send(JSON.stringify({ type: "chat", content: text }));
             messageInput.value = '';
-            // keep focus on mobile after send
             messageInput.focus();
         }
 
@@ -476,22 +488,37 @@
             }
         });
 
-        // Start connection
         connectWebSocket();
 
-        // Extra horror: random flicker on chat border
         setInterval(() => {
             if (Math.random() < 0.1) {
-                const messagesArea = document.querySelector('.messages-area');
-                messagesArea.style.borderColor = '#ff0000';
-                setTimeout(() => messagesArea.style.borderColor = '#00ff41', 200);
+                const area = document.querySelector('.messages-area');
+                area.style.borderColor = '#ff0000';
+                setTimeout(() => area.style.borderColor = '#00ff41', 200);
             }
         }, 15000);
 
-        // Auto-focus input on page load
-        window.addEventListener('load', () => {
-            messageInput.focus();
-        });
+        window.addEventListener('load', () => messageInput.focus());
+
+        // Optional: adjust padding when keyboard opens (for iOS)
+        if ('visualViewport' in window) {
+            let originalPadding = null;
+            window.visualViewport.addEventListener('resize', () => {
+                const viewportHeight = window.visualViewport.height;
+                const bodyHeight = window.innerHeight;
+                if (viewportHeight < bodyHeight) {
+                    if (originalPadding === null) {
+                        originalPadding = getComputedStyle(document.body).paddingBottom;
+                        document.body.style.paddingBottom = '0px';
+                    }
+                } else {
+                    if (originalPadding !== null) {
+                        document.body.style.paddingBottom = originalPadding;
+                        originalPadding = null;
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
