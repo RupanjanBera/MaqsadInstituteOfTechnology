@@ -56,40 +56,40 @@
         .system-nav {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            padding: 0.8rem;
+            gap: 0.4rem;
+            padding: 0.6rem;
             background: #0a0a0a;
             border-bottom: 2px solid #00ff41;
             justify-content: center;
             z-index: 10;
             position: relative;
+            flex-shrink: 0;
         }
 
         .system-nav a {
             color: #00ff41;
             text-decoration: none;
             font-weight: bold;
-            font-size: clamp(0.7rem, 3.5vw, 0.9rem);
-            padding: 0.3rem 0.6rem;
-            transition: 0.2s;
+            font-size: clamp(0.65rem, 3.5vw, 0.85rem);
+            padding: 0.3rem 0.5rem;
+            white-space: nowrap;
         }
 
         .system-nav a:hover, .active-nav {
             color: #ff0000;
             border-bottom: 2px solid #ff0000;
-            text-shadow: 0 0 5px red;
         }
 
-        /* Chat container - flexible */
+        /* Chat container - uses flex to keep input at bottom */
         .chat-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 1rem;
-            gap: 0.8rem;
             overflow: hidden;
             position: relative;
             z-index: 5;
+            padding: 0.5rem;
+            gap: 0.5rem;
         }
 
         .messages-area {
@@ -101,9 +101,9 @@
             border-radius: 4px;
             box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
             scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
 
-        /* Message styling */
         .message {
             font-size: clamp(0.75rem, 4vw, 0.85rem);
             margin-bottom: 0.6rem;
@@ -127,11 +127,13 @@
             margin-right: 8px;
         }
 
-        /* Input area - touch friendly */
+        /* Input area - ALWAYS VISIBLE at bottom */
         .input-area {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             padding: 0.5rem 0;
+            background: #000;
+            flex-shrink: 0;
         }
 
         #messageInput {
@@ -144,6 +146,7 @@
             font-size: 1rem;
             outline: none;
             border-radius: 4px;
+            min-height: 44px;
         }
 
         #messageInput:focus {
@@ -155,14 +158,14 @@
             background: #000;
             border: 2px solid #00ff41;
             color: #00ff41;
-            padding: 0 20px;
+            padding: 0 18px;
             font-family: monospace;
             font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
             transition: 0.2s;
             border-radius: 4px;
-            min-height: 48px; /* touch friendly */
+            min-height: 48px;
         }
 
         button:hover {
@@ -174,11 +177,11 @@
         /* Status and trackers */
         .status {
             position: fixed;
-            bottom: 8px;
-            right: 8px;
+            bottom: 5px;
+            right: 5px;
             background: rgba(0,0,0,0.7);
-            padding: 4px 10px;
-            font-size: clamp(0.6rem, 3vw, 0.7rem);
+            padding: 3px 8px;
+            font-size: 0.6rem;
             border-radius: 4px;
             z-index: 20;
             border: 1px solid #0f0;
@@ -187,14 +190,14 @@
 
         .sound-toggle {
             position: fixed;
-            bottom: 8px;
-            left: 8px;
+            bottom: 5px;
+            left: 5px;
             background: rgba(0,0,0,0.7);
             border: 1px solid #ff0000;
-            padding: 4px 10px;
+            padding: 3px 8px;
             cursor: pointer;
             z-index: 20;
-            font-size: clamp(0.6rem, 3vw, 0.7rem);
+            font-size: 0.6rem;
             color: #ff5555;
             border-radius: 4px;
             backdrop-filter: blur(4px);
@@ -202,13 +205,13 @@
 
         .ip-tracker {
             position: fixed;
-            bottom: 8px;
+            bottom: 5px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0,0,0,0.8);
             border-top: 2px solid #ff0000;
-            padding: 4px 12px;
-            font-size: clamp(0.55rem, 3vw, 0.65rem);
+            padding: 3px 10px;
+            font-size: 0.55rem;
             z-index: 20;
             color: #ff8888;
             white-space: nowrap;
@@ -218,7 +221,6 @@
             backdrop-filter: blur(4px);
         }
 
-        /* glitch animation */
         .glitch {
             animation: glitchText 0.1s 2;
         }
@@ -228,9 +230,8 @@
             100% { transform: translate(-1px, 1px); opacity: 1; }
         }
 
-        /* Scrollbar horror */
         .messages-area::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
         .messages-area::-webkit-scrollbar-track {
             background: #000;
@@ -240,22 +241,24 @@
             border-radius: 3px;
         }
 
-        /* Mobile optimizations */
+        /* Mobile-specific: ensure input stays above keyboard */
         @media (max-width: 768px) {
-            .chat-container { padding: 0.6rem; }
-            .input-area { gap: 6px; }
-            #messageInput { padding: 10px; font-size: 0.9rem; }
-            button { padding: 0 14px; min-height: 44px; }
-            .system-nav { gap: 0.3rem; padding: 0.5rem; }
-            .ip-tracker { white-space: normal; text-align: center; width: 90%; bottom: 40px; }
-            .status, .sound-toggle { bottom: 5px; }
+            .chat-container { padding: 0.3rem; gap: 0.3rem; }
+            .input-area { padding: 0.3rem 0; gap: 6px; }
+            #messageInput { padding: 10px; font-size: 0.9rem; min-height: 44px; }
+            button { padding: 0 14px; min-height: 44px; font-size: 0.85rem; }
+            .system-nav { gap: 0.2rem; padding: 0.4rem; }
+            .system-nav a { font-size: 0.65rem; padding: 0.2rem 0.4rem; }
+            .ip-tracker { white-space: normal; text-align: center; width: 85%; bottom: 40px; font-size: 0.5rem; }
+            .status, .sound-toggle { font-size: 0.55rem; bottom: 4px; }
         }
 
         @media (max-width: 480px) {
-            .message { font-size: 0.7rem; }
+            .message { font-size: 0.7rem; margin-bottom: 0.4rem; }
             .timestamp { font-size: 0.55rem; }
-            button { font-size: 0.8rem; padding: 0 12px; }
-            .ip-tracker { font-size: 0.5rem; bottom: 35px; }
+            button { font-size: 0.75rem; padding: 0 10px; min-height: 40px; }
+            #messageInput { font-size: 0.85rem; padding: 8px; min-height: 40px; }
+            .ip-tracker { bottom: 45px; width: 90%; }
         }
     </style>
 </head>
@@ -270,7 +273,7 @@
         <a href="shop.html">[SHOP]</a>
         <a href="logs.html">[LOGS]</a>
         <a href="terminal.html">[TERMINAL]</a>
-        <a href="chat.html" class="active-nav">[GLOBAL CHAT]</a>
+        <a href="chat.html" class="active-nav">[CHAT]</a>
     </nav>
 
     <div class="chat-container">
@@ -278,22 +281,24 @@
             <div class="message system">> Connecting to MAQSAD hive...</div>
         </div>
         <div class="input-area">
-            <input type="text" id="messageInput" placeholder="Whisper to the collective..." autocomplete="off">
+            <input type="text" id="messageInput" placeholder="Type your message..." autocomplete="off" enterkeyhint="send">
             <button id="sendBtn">⟁ SEND ⟁</button>
         </div>
     </div>
 
     <div class="status" id="connStatus">⚫ CONNECTING</div>
     <div class="sound-toggle" id="soundToggle">🔊 VOICE ON</div>
-    <div id="ipTracker" class="ip-tracker">📍 INITIALIZING TRACKING...</div>
+    <div id="ipTracker" class="ip-tracker">📍 INITIALIZING...</div>
 
     <script>
         // --- Configuration ---
+        // Replace with your actual ngrok wss URL
         const WS_URL = "wss://b65e-49-37-42-14.ngrok-free.app/ws";
         let socket = null;
         let myName = "unknown";
         let voiceEnabled = true;
         let reconnectAttempts = 0;
+        let reconnectTimer = null;
 
         // DOM elements
         const messagesDiv = document.getElementById('messages');
@@ -303,16 +308,18 @@
         const soundToggle = document.getElementById('soundToggle');
         const ipTracker = document.getElementById('ipTracker');
 
-        // --- IP Geolocation scare (async) ---
-        async function fetchIPData() {
+        // --- IP tracking (scare user) ---
+        async function fetchIP() {
             try {
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
+                const res = await fetch('https://ipapi.co/json/');
+                const data = await res.json();
                 const ip = data.ip || 'unknown';
                 const city = data.city || 'Unknown';
+                const region = data.region || '';
                 const country = data.country_name || 'Unknown';
-                ipTracker.innerHTML = `⚠️ YOUR IP: ${ip} | LOCATION: ${city}, ${country} | 🔴 YOU ARE TRACKED`;
-                // random glitch on IP display
+                const loc = city + (region ? `, ${region}` : '') + `, ${country}`;
+                ipTracker.innerHTML = `⚠️ YOUR IP: ${ip} | LOCATION: ${loc} | 🔴 YOU ARE BEING TRACKED BY MAQSAD`;
+                // random glitch on tracker
                 setInterval(() => {
                     if (Math.random() < 0.2) {
                         ipTracker.style.animation = 'glitchText 0.2s';
@@ -320,29 +327,34 @@
                     }
                 }, 12000);
             } catch (err) {
-                ipTracker.innerHTML = '⚠️ UNABLE TO HIDE: YOUR SIGNATURE IS LOGGED';
+                ipTracker.innerHTML = '⚠️ UNABLE TO HIDE: YOUR DIGITAL SIGNATURE IS LOGGED';
             }
         }
-        fetchIPData();
+        fetchIP();
 
-        // --- Creepy voice (Web Speech) with toggle ---
+        // --- Creepy voice synthesis ---
         function speak(text) {
             if (!voiceEnabled || !window.speechSynthesis) return;
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = 0.65;
             utterance.pitch = 0.5;
             utterance.volume = 0.5;
+            // try to use a deeper voice if available
+            const voices = window.speechSynthesis.getVoices();
+            const creepyVoice = voices.find(v => v.name.includes('Google UK English Male') || v.name.includes('Samantha') || v.name.includes('Microsoft David'));
+            if (creepyVoice) utterance.voice = creepyVoice;
             window.speechSynthesis.cancel();
             window.speechSynthesis.speak(utterance);
         }
 
-        soundToggle.addEventListener('click', () => {
+        // Toggle voice
+        soundToggle.onclick = () => {
             voiceEnabled = !voiceEnabled;
             soundToggle.innerText = voiceEnabled ? "🔊 VOICE ON" : "🔇 VOICE OFF";
             if (voiceEnabled) speak("Voice reconnected. You cannot hide.");
-        });
+        };
 
-        // --- Add message to chat ---
+        // --- Add message to chat window ---
         function addMessage(type, sender, content, isSystem = false, isAI = false) {
             const msgDiv = document.createElement('div');
             msgDiv.className = 'message';
@@ -350,17 +362,18 @@
             let html = `<span class="timestamp">[${time}]</span>`;
 
             if (type === 'identity') {
-                html += `<span class="system">⚡ You are now: ${content}</span>`;
+                html += `<span class="system">⚡ You are now known as: ${content}</span>`;
                 speak(`You are ${content}`);
             } else if (isSystem) {
                 html += `<span class="system">🔮 ${content}</span>`;
-                if (content.includes("entered")) speak("A new subject has joined.");
-                else if (!content.includes("consumed")) speak(content);
+                if (content.includes("entered")) speak("A new subject has joined the hive.");
+                else if (content.includes("consumed")) speak("A soul has been taken.");
+                else if (!content.includes("Reconnecting")) speak(content);
             } else if (isAI) {
                 html += `<span class="ai">⛧ ${sender}: ${content} ⛧</span>`;
                 speak(content);
             } else {
-                html += `<span class="chat">👁️ <strong>${sender}</strong>: ${content}</span>`;
+                html += `<span class="chat">👁️ <strong>${escapeHtml(sender)}</strong>: ${escapeHtml(content)}</span>`;
                 if (voiceEnabled && sender !== myName) speak(`${sender} says: ${content}`);
             }
 
@@ -368,38 +381,59 @@
             messagesDiv.appendChild(msgDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-            // occasional glitch
-            if (Math.random() < 0.2) {
+            // Glitch effect on new messages
+            if (Math.random() < 0.25) {
                 msgDiv.classList.add('glitch');
                 setTimeout(() => msgDiv.classList.remove('glitch'), 200);
             }
+
+            // Auto-limit history to 500 messages
+            while (messagesDiv.children.length > 500) {
+                messagesDiv.removeChild(messagesDiv.firstChild);
+            }
+        }
+
+        // Basic XSS protection
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
         }
 
         // --- WebSocket connection with auto-reconnect ---
         function connectWebSocket() {
             if (socket && socket.readyState === WebSocket.OPEN) return;
+            if (reconnectTimer) clearTimeout(reconnectTimer);
             connStatus.innerHTML = "⚫ CONNECTING...";
             connStatus.style.color = "#ff8800";
+            
             socket = new WebSocket(WS_URL);
 
             socket.onopen = () => {
                 connStatus.innerHTML = "🟢 CONNECTED";
                 connStatus.style.color = "#0f0";
                 reconnectAttempts = 0;
-                addMessage('system', null, "Connected to MAQSAD collective.", true);
+                addMessage('system', null, "Connected to MAQSAD collective. You are not alone.", true);
             };
 
             socket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                if (data.type === 'identity') {
-                    myName = data.name;
-                    addMessage('identity', null, myName);
-                } else if (data.type === 'system') {
-                    addMessage('system', null, data.content, true);
-                } else if (data.type === 'chat') {
-                    addMessage('chat', data.sender, data.content);
-                } else if (data.type === 'ai') {
-                    addMessage('ai', data.sender, data.content, false, true);
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'identity') {
+                        myName = data.name;
+                        addMessage('identity', null, myName);
+                    } else if (data.type === 'system') {
+                        addMessage('system', null, data.content, true);
+                    } else if (data.type === 'chat') {
+                        addMessage('chat', data.sender, data.content);
+                    } else if (data.type === 'ai') {
+                        addMessage('ai', data.sender, data.content, false, true);
+                    }
+                } catch (err) {
+                    console.error("Parse error", err);
                 }
             };
 
@@ -407,8 +441,8 @@
                 connStatus.innerHTML = "🔴 DISCONNECTED";
                 connStatus.style.color = "#f00";
                 addMessage('system', null, "Connection lost. Reconnecting in 5 seconds...", true);
-                setTimeout(() => {
-                    if (reconnectAttempts < 10) {
+                reconnectTimer = setTimeout(() => {
+                    if (reconnectAttempts < 20) {
                         reconnectAttempts++;
                         connectWebSocket();
                     } else {
@@ -418,7 +452,7 @@
             };
 
             socket.onerror = (err) => {
-                console.error("WS error", err);
+                console.error("WebSocket error", err);
                 connStatus.innerHTML = "⚠️ ERROR";
             };
         }
@@ -426,29 +460,40 @@
         // --- Send message ---
         function sendMessage() {
             const text = messageInput.value.trim();
-            if (!text || !socket || socket.readyState !== WebSocket.OPEN) {
-                addMessage('system', null, "Cannot send: not connected to hive.", true);
+            if (!text) return;
+            if (!socket || socket.readyState !== WebSocket.OPEN) {
+                addMessage('system', null, "Not connected to hive. Message not sent.", true);
                 return;
             }
             socket.send(JSON.stringify({ type: "chat", content: text }));
             messageInput.value = '';
+            // keep focus on mobile after send
+            messageInput.focus();
         }
 
         sendBtn.addEventListener('click', sendMessage);
         messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
         });
 
         // Start connection
         connectWebSocket();
 
-        // Extra scare: random flicker on the chat container
+        // Additional horror: random flicker on chat border
         setInterval(() => {
             if (Math.random() < 0.1) {
-                messagesDiv.style.borderColor = '#ff0000';
+                const border = messagesDiv.style.borderColor = '#ff0000';
                 setTimeout(() => messagesDiv.style.borderColor = '#00ff41', 200);
             }
         }, 15000);
+
+        // Auto-focus input on page load
+        window.addEventListener('load', () => {
+            messageInput.focus();
+        });
     </script>
 </body>
 </html>
